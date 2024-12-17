@@ -1,0 +1,227 @@
+/* 基本样式 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 0;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+header nav ul li {
+    margin-left: 20px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+header nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* 主内容样式 */
+main {
+    padding: 20px 0;
+}
+
+main section {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+main section h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #4CAF50;
+}
+
+main section ul {
+    list-style: none;
+    padding: 0;
+}
+
+main section ul li {
+    margin-bottom: 20px;
+}
+
+/* 问题列表样式 */
+.question-item {
+    background-color: #f9f9f9;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.question-item .question-title {
+    font-size: 18px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.question-item .question-title:hover {
+    text-decoration: underline;
+}
+
+.question-item .question-author {
+    font-size: 14px;
+    color: #888;
+    margin: 5px 0;
+}
+
+.question-item .question-content {
+    font-size: 16px;
+    color: #333;
+}
+
+/* 回答样式 */
+.answer-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.answer-content {
+    margin-bottom: 10px;
+}
+
+.answer-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.answer-author {
+    font-weight: bold;
+}
+
+.answer-score {
+    color: #4CAF50;
+}
+
+.like-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.like-button:hover {
+    background-color: #45a049;
+}
+
+/* 表单样式 */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input, form textarea, form button {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
+
+/* 底部样式 */
+footer {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* 编辑按钮样式 */
+.edit-button {
+    background-color: #ffa500;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.edit-button:hover {
+    background-color: #ff7f00;
+}
+
+/* 回答者和提问者名字样式 */
+.answer-author, #question-author {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+/* 删除按钮样式 */
+.delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.delete-button:hover {
+    background-color: #e53935;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>用户注册</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <form id="register-form">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="email">邮箱:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" required>
+
+                <label for="avatar">头像:</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*" required>
+
+                <button type="submit">注册</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 学术问答平台. 版权所有.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const avatarFile = document.getElementById('avatar').files[0];
+
+            if (avatarFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const avatar = event.target.result;
+
+                    // 将用户信息存储在本地存储中
+                    const user = {
+                        username: username,
+                        email: email,
+                        password: password,
+                        avatar: avatar,
+                        signature: '', // 默认个人签名为空
+                        points: 0, // 默认积分为 0
+                        status: 'active' // 默认状态为 active
+                    };
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    alert('注册成功');
+                    window.location.href = 'login.html';
+                };
+                reader.readAsDataURL(avatarFile);
+            } else {
+                alert('请上传头像');
+            }
+        });
+    </script>
+</body>
+</html>

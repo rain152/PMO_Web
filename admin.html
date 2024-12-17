@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员页面</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>管理员页面</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                    <li><a href="contact.html">联系我们</a></li>
+                    <li><a href="profile.html">个人资料</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="user-audits">
+                <h2>用户资料审核</h2>
+                <ul>
+                    <li>用户1 <button>审核</button></li>
+                    <li>用户2 <button>审核</button></li>
+                    <!-- 更多待审核用户 -->
+                </ul>
+            </section>
+            <section class="moderator-appointment">
+                <h2>版主任命</h2>
+                <form action="appoint_moderator.php" method="post">
+                    <label for="moderator">版主用户名:</label>
+                    <input type="text" id="moderator" name="moderator" required>
+                    <button type="submit">任命</button>
+                </form>
+            </section>
+            <section class="dispute-resolution">
+                <h2>争议裁决</h2>
+                <ul>
+                    <li>争议1 <button>裁决</button></li>
+                    <li>争议2 <button>裁决</button></li>
+                    <!-- 更多争议 -->
+                </ul>
+            </section>
+            <section class="sorting-strategy">
+                <h2>回答排序策略</h2>
+                <form action="update_sorting_strategy.php" method="post">
+                    <label for="strategy">策略:</label>
+                    <input type="text" id="strategy" name="strategy" required>
+                    <button type="submit">更新</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 学术问答平台. 版权所有.</p>
+        </div>
+    </footer>
+</body>
+</html>

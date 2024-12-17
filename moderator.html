@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>版主管理</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>版主管理</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                    <li><a href="contact.html">联系我们</a></li>
+                    <li><a href="profile.html">个人资料</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="pending-questions">
+                <h2>待审核问题</h2>
+                <ul id="pending-questions-list">
+                    <!-- 待审核问题将动态插入到这里 -->
+                </ul>
+            </section>
+            <section class="pending-answers">
+                <h2>待审核回答</h2>
+                <ul id="pending-answers-list">
+                    <!-- 待审核回答将动态插入到这里 -->
+                </ul>
+            </section>
+            <section class="moderator-records">
+                <h2>处理记录</h2>
+                <ul id="moderator-records-list">
+                    <!-- 处理记录将动态插入到这里 -->
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 学术问答平台. 版权所有.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 获取URL参数
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // 显示待审核问题
+        function displayPendingQuestions(questions) {
+            const pendingQuestionsList = document.getElementById('pending-questions-list');
+            pendingQuestionsList.innerHTML = '';
+
+            for (const id in questions) {
+                const question = questions[id];
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <p>${question.title}</p>
+                    <button onclick="deleteQuestion('${id}')">删除</button>
+                `;
+                pendingQuestionsList.appendChild(li);
+            }
+        }
+
+        // 显示待审核回答
+        function displayPendingAnswers(questions) {
+            const pendingAnswersList = document.getElementById('pending-answers-list');
+            pendingAnswersList.innerHTML = '';
+
+            for (const id in questions) {
+                const question = questions[id];
+                question.answers.forEach((answer, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <p>${answer.content}</p>
+                        <button onclick="deleteAnswer('${id}', ${index})">删除</button>
+                    `;
+                    pendingAnswersList.appendChild(li);
+                });
+            }
+        }
+
+        // 删除问题
+        function deleteQuestion(questionId) {
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            delete questions[questionId];
+            localStorage.setItem('questions', JSON.stringify(questions));
+            displayPendingQuestions(questions);
+            displayPendingAnswers(questions);
+        }
+
+        // 删除回答
+        function deleteAnswer(questionId, answerIndex) {
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            const question = questions[questionId];
+            if (question) {
+                question.answers.splice(answerIndex, 1);
+                localStorage.setItem('questions', JSON.stringify(questions));
+                displayPendingAnswers(questions);
+            }
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            displayPendingQuestions(questions);
+            displayPendingAnswers(questions);
+        });
+    </script>
+</body>
+</html>

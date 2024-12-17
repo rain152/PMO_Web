@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学术问答平台</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>学术问答平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                    <li><a href="contact.html">联系我们</a></li>
+                    <li><a href="profile.html">个人资料</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="module-details" id="module-details">
+                <h2 id="module-title">模块标题</h2>
+                <ul id="question-list">
+                    <!-- 问题将动态插入到这里 -->
+                </ul>
+            </section>
+            <section class="new-question">
+                <h2>提交新问题</h2>
+                <form id="new-question-form">
+                    <input type="text" id="new-question-title" placeholder="问题标题" required>
+                    <textarea id="new-question-content" placeholder="问题内容" required></textarea>
+                    <button type="button" id="submit-new-question">提交问题</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 学术问答平台. 版权所有.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 获取URL参数
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // 显示模块详情
+        function displayModuleDetails(category) {
+            document.getElementById('module-title').textContent = category;
+            const questionList = document.getElementById('question-list');
+            questionList.innerHTML = '';
+
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+
+            for (const id in questions) {
+                if (questions[id].category === category) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div class="question-item">
+                            <a href="question.html?id=${id}" class="question-title">${questions[id].title}</a>
+                            <p class="question-author">提问者: ${questions[id].author || '匿名'}</p>
+                            <p class="question-content">${questions[id].content}</p>
+                        </div>
+                    `;
+                    questionList.appendChild(li);
+                }
+            }
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            const category = getQueryParam('category');
+            displayModuleDetails(category);
+
+            // 添加新问题提交事件
+            document.getElementById('submit-new-question').addEventListener('click', () => {
+                const newQuestionTitle = document.getElementById('new-question-title').value;
+                const newQuestionContent = document.getElementById('new-question-content').value;
+                const loggedInUser = localStorage.getItem('loggedInUser');
+
+                if (newQuestionTitle && newQuestionContent && loggedInUser) {
+                    const questions = JSON.parse(localStorage.getItem('questions')) || {};
+                    const newQuestionId = Object.keys(questions).length + 1;
+                    questions[newQuestionId] = {
+                        title: newQuestionTitle,
+                        content: newQuestionContent,
+                        category: category,
+                        answers: [],
+                        author: loggedInUser
+                    };
+
+                    // 将问题数据存储到本地存储
+                    localStorage.setItem('questions', JSON.stringify(questions));
+
+                    // 显示新问题详情
+                    displayModuleDetails(category);
+
+                    // 清空表单
+                    document.getElementById('new-question-form').reset();
+                } else {
+                    alert('请填写问题标题和内容并确保已登录');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

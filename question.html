@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问题详情</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- 引入 MathJax 库 -->
+    <script type="text/javascript" async 
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>学术问答平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                    <li><a href="contact.html">联系我们</a></li>
+                    <li><a href="profile.html">个人资料</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="question-details" id="question-details">
+                <h2 id="question-title">问题标题</h2>
+                <p id="question-content">问题内容</p>
+                <div id="question-author"></div>
+                <button id="edit-question-btn" class="edit-button">编辑问题</button>
+            </section>
+            <section class="answers" id="answers">
+                <h2>回答</h2>
+                <ul id="answer-list">
+                    <!-- 回答将动态插入到这里 -->
+                </ul>
+            </section>
+            <section class="new-answer">
+                <h2>提交新回答</h2>
+                <form id="new-answer-form">
+                    <textarea id="new-answer-content" placeholder="回答内容" required></textarea>
+                    <button type="button" id="submit-new-answer">提交回答</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 学术问答平台. 版权所有.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 获取URL参数
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // 获取当前登录用户
+        function getLoggedInUser() {
+            return localStorage.getItem('loggedInUser');
+        }
+
+        // 显示问题详情
+        function displayQuestionDetails(questionId) {
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            const question = questions[questionId];
+
+            if (question) {
+                document.getElementById('question-title').textContent = question.title;
+                document.getElementById('question-content').textContent = question.content;
+                document.getElementById('question-author').textContent = "提问者: " + question.author;
+                displayAnswers(question.answers);
+
+                // 显示编辑按钮（如果当前登录者是提问者）
+                const loggedInUser = getLoggedInUser();
+                if (loggedInUser === question.author) {
+                    document.getElementById('edit-question-btn').style.display = 'inline-block';
+                    document.getElementById('edit-question-btn').addEventListener('click', () => {
+                        const newContent = prompt('编辑问题内容:', question.content);
+                        if (newContent) {
+                            question.content = newContent;
+                            localStorage.setItem('questions', JSON.stringify(questions));
+                            displayQuestionDetails(questionId);  // 刷新页面显示更新后的内容
+                        }
+                    });
+                } else {
+                    document.getElementById('edit-question-btn').style.display = 'none';
+                }
+            }
+        }
+
+        // 显示回答
+        function displayAnswers(answers) {
+            const answerList = document.getElementById('answer-list');
+            answerList.innerHTML = '';
+
+            answers.forEach((answer, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="answer-author">回答者: ${answer.author}</div>
+                    <p>${answer.content}</p>
+                    <div>
+                        <button id="like-button-${index}" onclick="likeAnswer(${index})">点赞 (${answer.likes})</button>
+                        <button id="dislike-button-${index}" onclick="dislikeAnswer(${index})">踩 (${answer.dislikes})</button>
+                    </div>
+                    <button class="edit-button" onclick="editAnswer(${index})">编辑回答</button>
+                    <button class="delete-button" onclick="deleteAnswer(${index})">删除回答</button>
+                `;
+                answerList.appendChild(li);
+
+                // 显示编辑和删除按钮（如果当前登录者是回答者）
+                const loggedInUser = getLoggedInUser();
+                const editButton = li.querySelector('.edit-button');
+                const deleteButton = li.querySelector('.delete-button');
+                const likeButton = li.querySelector(`#like-button-${index}`);
+                const dislikeButton = li.querySelector(`#dislike-button-${index}`);
+
+                if (loggedInUser === answer.author) {
+                    editButton.style.display = 'inline-block';
+                    deleteButton.style.display = 'inline-block';
+                } else {
+                    editButton.style.display = 'none';
+                    deleteButton.style.display = 'none';
+                }
+
+                // 检查用户是否已经点赞或踩
+                const userVotes = JSON.parse(localStorage.getItem('userVotes')) || {};
+                const userVoteKey = `${loggedInUser}_${getQueryParam('id')}_${index}`;
+
+                if (userVotes[userVoteKey]) {
+                    if (userVotes[userVoteKey] === 'liked') {
+                        likeButton.disabled = true;
+                    } else if (userVotes[userVoteKey] === 'disliked') {
+                        dislikeButton.disabled = true;
+                    }
+                }
+
+                // 渲染 LaTeX 公式
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, li]);
+            });
+        }
+
+        // 点赞回答
+        function likeAnswer(index) {
+            const questionId = getQueryParam('id');
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            const question = questions[questionId];
+            const loggedInUser = getLoggedInUser();
+
+            if (question && question.answers[index]) {
+                const userVotes = JSON.parse(localStorage.getItem('userVotes')) || {};
+                const userVoteKey = `${loggedInUser}_${questionId}_${index}`;
+
+                // 如果当前用户未点赞，进行点赞
+                if (!userVotes[userVoteKey]) {
+                    question.answers[index].likes++;
+                    userVotes[userVoteKey] = 'liked';
+                    localStorage.setItem('userVotes', JSON.stringify(userVotes));
+                    localStorage.setItem('questions', JSON.stringify(questions));
+                    displayAnswers(question.answers);  // 刷新页面
+                }
+            }
+        }
+
+        // 踩回答
+        function dislikeAnswer(index) {
+            const questionId = getQueryParam('id');
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            const question = questions[questionId];
+            const loggedInUser = getLoggedInUser();
+
+            if (question && question.answers[index]) {
+                const userVotes = JSON.parse(localStorage.getItem('userVotes')) || {};
+                const userVoteKey = `${loggedInUser}_${questionId}_${index}`;
+
+                // 如果当前用户未踩，进行踩
+                if (!userVotes[userVoteKey]) {
+                    question.answers[index].dislikes++;
+                    userVotes[userVoteKey] = 'disliked';
+                    localStorage.setItem('userVotes', JSON.stringify(userVotes));
+                    localStorage.setItem('questions', JSON.stringify(questions));
+                    displayAnswers(question.answers);  // 刷新页面
+                }
+            }
+        }
+
+        // 编辑回答
+        function editAnswer(index) {
+            const questionId = getQueryParam('id');
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            const question = questions[questionId];
+
+            if (question && question.answers[index]) {
+                const newContent = prompt('编辑回答内容:', question.answers[index].content);
+                if (newContent) {
+                    question.answers[index].content = newContent;
+                    localStorage.setItem('questions', JSON.stringify(questions));
+                    displayAnswers(question.answers);  // 刷新页面
+                }
+            }
+        }
+
+        // 删除回答
+        function deleteAnswer(index) {
+            const questionId = getQueryParam('id');
+            const questions = JSON.parse(localStorage.getItem('questions')) || {};
+            const question = questions[questionId];
+
+            if (question && question.answers[index]) {
+                const confirmed = confirm('确定要删除这个回答吗？');
+                if (confirmed) {
+                    question.answers.splice(index, 1);  // 删除该回答
+                    localStorage.setItem('questions', JSON.stringify(questions));
+                    displayAnswers(question.answers);  // 刷新页面
+                }
+            }
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            const questionId = getQueryParam('id');
+            displayQuestionDetails(questionId);
+
+            // 添加新回答提交事件
+            document.getElementById('submit-new-answer').addEventListener('click', () => {
+                const newAnswerContent = document.getElementById('new-answer-content').value;
+                const loggedInUser = getLoggedInUser();
+
+                if (newAnswerContent && loggedInUser) {
+                    const questions = JSON.parse(localStorage.getItem('questions')) || {};
+                    const question = questions[questionId];
+
+                    if (question) {
+                        question.answers.push({
+                            content: newAnswerContent,
+                            author: loggedInUser,
+                            likes: 0,
+                            dislikes: 0
+                        });
+
+                        localStorage.setItem('questions', JSON.stringify(questions));
+                        displayAnswers(question.answers);
+                        document.getElementById('new-answer-form').reset();
+                    }
+                } else {
+                    alert('请填写回答内容并确保已登录');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

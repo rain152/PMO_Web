@@ -62,7 +62,22 @@
                         points: 0, // 默认积分为 0
                         status: 'active' // 默认状态为 active
                     };
-                    localStorage.setItem('user', JSON.stringify(user));
+
+                    // 从本地存储中获取现有用户列表
+                    let users = JSON.parse(localStorage.getItem('users')) || [];
+
+                    // 检查用户名是否已存在
+                    const existingUser = users.find(u => u.username === username);
+                    if (existingUser) {
+                        alert('用户名已存在，请选择另一个用户名');
+                        return;
+                    }
+
+                    // 将新用户添加到用户列表中
+                    users.push(user);
+
+                    // 将更新后的用户列表存储回本地存储
+                    localStorage.setItem('users', JSON.stringify(users));
 
                     alert('注册成功');
                     window.location.href = 'login.html';

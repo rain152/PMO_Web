@@ -27,7 +27,6 @@
                 <ul>
                     <li><a href="index.html">首页</a></li>
                     <li><a href="about.html">关于我们</a></li>
-                    <li><a href="contact.html">联系我们</a></li>
                 </ul>
             </nav>
         </div>
@@ -70,8 +69,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 从本地存储中获取用户信息并填充表单
-            const user = JSON.parse(localStorage.getItem('user'));
+            // 从本地存储中获取当前登录用户的用户名
+            const loggedInUser = localStorage.getItem('loggedInUser');
+
+            // 从本地存储中获取所有用户信息
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+
+            // 查找当前登录用户的信息
+            const user = users.find(u => u.username === loggedInUser);
 
             if (user) {
                 document.getElementById('username').value = user.username;
@@ -90,17 +95,30 @@
             const password = document.getElementById('password').value;
             const signature = document.getElementById('signature').value;
 
-            // 将更新后的用户信息存储在本地存储中
-            const user = JSON.parse(localStorage.getItem('user'));
-            user.username = username;
-            user.email = email;
-            user.password = password;
-            user.signature = signature;
+            // 从本地存储中获取当前登录用户的用户名
+            const loggedInUser = localStorage.getItem('loggedInUser');
 
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('loggedInUser', username); // 更新登录用户信息
+            // 从本地存储中获取所有用户信息
+            const users = JSON.parse(localStorage.getItem('users')) || [];
 
-            alert('个人资料已保存');
+            // 查找当前登录用户的信息
+            const user = users.find(u => u.username === loggedInUser);
+
+            if (user) {
+                // 更新用户信息
+                user.username = username;
+                user.email = email;
+                user.password = password;
+                user.signature = signature;
+
+                // 将更新后的用户信息存储回本地存储
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('loggedInUser', username); // 更新登录用户信息
+
+                alert('个人资料已保存');
+            } else {
+                alert('用户信息未找到');
+            }
         });
 
         document.getElementById('back-to-index').addEventListener('click', () => {

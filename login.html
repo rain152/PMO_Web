@@ -39,10 +39,13 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            // 从本地存储中获取用户信息
-            const user = JSON.parse(localStorage.getItem('user'));
+            // 从本地存储中获取所有用户信息
+            const users = JSON.parse(localStorage.getItem('users')) || [];
 
-            if (user && user.email === email && user.password === password && user.status === 'active') {
+            // 查找匹配的用户
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user && user.status === 'active') {
                 alert('登录成功');
                 // 将登录状态设置为 true
                 localStorage.setItem('login', 'true');

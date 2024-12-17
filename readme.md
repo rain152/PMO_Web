@@ -6,6 +6,7 @@
 ```
 Web
 ├── styles.css
+├── about.html
 ├── index.html
 ├── register.html
 ├── login.html
@@ -18,6 +19,7 @@ Web
 
 ## 文件说明
 - **`styles.css`**: 包含所有的CSS样式，用于美化页面。
+- **`about.html`**: 介绍开发小组成员。
 - **`index.html`**: 首页，显示板块分类。
 - **`register.html`**: 用户注册页面。
 - **`login.html`**: 用户登录页面。
